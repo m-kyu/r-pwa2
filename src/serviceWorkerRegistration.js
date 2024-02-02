@@ -9,6 +9,21 @@
 
 // To learn more about the benefits of this model and instructions on how to
 // opt-in, read https://cra.link/PWA
+function urlBase64ToUint8Array(base64String) {
+  var padding = '='.repeat((4 - base64String.length % 4) % 4);
+  var base64 = (base64String + padding)
+    .replace(/\-/g, '+')
+    .replace(/_/g, '/');
+ 
+  var rawData = window.atob(base64);
+  var outputArray = new Uint8Array(rawData.length);
+ 
+  for (var i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
 
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
@@ -31,19 +46,73 @@ export function register(config) {
 
     window.addEventListener('load', () => {
       const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
+      
+      const domain = 'https://port-0-express-jvvy2blm4a51lv.sel5.cloudtype.app'
+      function urlBase64ToUint8Array(base64String) {
+        var padding = '='.repeat((4 - base64String.length % 4) % 4);
+        var base64 = (base64String + padding)
+          .replace(/\-/g, '+')
+          .replace(/_/g, '/');
+      
+        var rawData = window.atob(base64);
+        var outputArray = new Uint8Array(rawData.length);
+      
+        for (var i = 0; i < rawData.length; ++i) {
+          outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+      }
+      
+      // return;
+      function getSubscription(registration){
+        //서버 퍼블릭키를 활용하여 사용자 정보 생성
+        return registration.pushManager.getSubscription()
+          .then(async (subscription)=>{
 
-      if (isLocalhost) {
+            if(subscription){
+               return subscription;
+            }
+
+            let publicKey = await fetch(domain+'/push/publicKey');
+            let publicText = await publicKey.text();
+            let converKey = urlBase64ToUint8Array(publicText);
+
+            return registration.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: converKey
+            });
+          })
+      }
+
+      if (!isLocalhost) {
         // This is running on localhost. Let's check if a service worker still exists or not.
         checkValidServiceWorker(swUrl, config);
 
         // Add some additional logging to localhost, pointing developers to the
         // service worker/PWA documentation.
-        navigator.serviceWorker.ready.then(() => {
-          console.log(
-            'This web app is being served cache-first by a service ' +
-              'worker. To learn more, visit https://cra.link/PWA'
-          );
-        });
+        navigator.serviceWorker.ready
+        .then((registration)=>{
+          return getSubscription(registration);
+        })
+        .then((subscribe)=>{
+          
+          document.getElementById('msg').onclick = async ()=>{
+              console.log('구독시작!');
+
+              await fetch(domain + '/push/sendNoti',{
+                method:'post',
+                headers: {
+                  'Content-type': 'application/json'
+                },
+                body:JSON.stringify({subscribe})
+              })
+              .then(res=>res.text())
+              .then(res=>{
+                console.log(res)
+              });
+          }
+        })
+
       } else {
         // Is not localhost. Just register service worker
         registerValidSW(swUrl, config);
