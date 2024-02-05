@@ -22,7 +22,8 @@ function Camera(props) {
       const formData = new FormData();
       formData.append('image', blob);
       
-      await fetch('http://localhost:3000/camera/save',{
+      //await fetch('http://localhost:3000/camera/save',{
+      await fetch('https://port-0-express-jvvy2blm4a51lv.sel5.cloudtype.app/camera/save',{
         method:'post',
        /*  headers: {
           'Content-type': 'application/json'
