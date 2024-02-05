@@ -35,8 +35,13 @@ function Camera(props) {
         height="auto"
       />
       <button onClick={capture}> Capture photo </button>
-      <img src={webcamImg}/>
-      {webcamImg}
+      {
+        webcamImg && <div>
+                        <img src={webcamImg} />
+                        {webcamImg}
+                      </div>
+      }
+      
    
     </div>
   );
