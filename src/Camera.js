@@ -12,11 +12,12 @@ function Camera(props) {
       }
   }
 
-  const webcam = useRef();
-  const [webcamImg, setWebcamImg] = useState();
+  const webcam = useRef(null);
+  const [webcamImg, setWebcamImg] = useState(null);
 
   const capture = ()=>{
       const imgSrc = webcam.current.getScreenshot();
+      console.log(imgSrc)
       setWebcamImg(imgSrc);
   }
 
@@ -33,14 +34,12 @@ function Camera(props) {
         screenshotFormat="image/jpeg"
         width="100%"
         height="auto"
+        // (전면)user / (후면)environment
+        videoConstraints={{facingMode:{ exact: "environment" }}}
       />
       <button onClick={capture}> Capture photo </button>
-      {
-        webcamImg && <div>
-                        <img src={webcamImg} />
-                        {webcamImg}
-                      </div>
-      }
+      
+      <img src={webcamImg} width="300" />
       
    
     </div>
