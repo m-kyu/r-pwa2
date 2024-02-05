@@ -37,8 +37,9 @@ function Camera(props) {
     <div>
       {/* <form method='post' encType='multipart/form-data'></form> */}
       <img src={preImage} />
-      <input type="file" name="photo" onChange={file} multiple />
+      <input type="file" name="photo" accept="image/*" capture="camera" onChange={file} multiple />
 
+      {/* <input type="file" accept="image/*" capture="camera" /> */}
 
       <Webcam
         ref={webcam}
