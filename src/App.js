@@ -21,7 +21,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <button id="msg">구독하기</button>
-        <button id="msgDel">알림취소</button>
+        
 
 
 

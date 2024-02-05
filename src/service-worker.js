@@ -77,8 +77,6 @@ self.addEventListener('activate',(event)=>{
   event.waitUntil(self.clients.claim());
 })
 
-
-
 self.addEventListener('push',(event)=>{
   const data = JSON.parse(event.data.text());
    console.log('메세지가?....', event.data.text());
