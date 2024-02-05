@@ -15,9 +15,20 @@ function Camera(props) {
   const webcam = useRef(null);
   const [webcamImg, setWebcamImg] = useState(null);
 
-  const capture = ()=>{
+  const capture = async ()=>{
       const imgSrc = webcam.current.getScreenshot();
-      console.log(imgSrc)
+
+      const blob = new Blob([imgSrc], { type: 'image/jpeg' });
+      const formData = new FormData();
+      formData.append('image', blob);
+      
+      await fetch('http://localhost:3000/camera/save',{
+        method:'post',
+       /*  headers: {
+          'Content-type': 'application/json'
+        }, */
+        body:formData
+      })    
       setWebcamImg(imgSrc);
   }
 
@@ -34,8 +45,9 @@ function Camera(props) {
         screenshotFormat="image/jpeg"
         width="100%"
         height="auto"
-        // (전면)user / (후면)environment
-        videoConstraints={{facingMode:{ exact: "environment" }}}
+        
+        videoConstraints={{facingMode:"user"}}  /* 전면 */
+        // videoConstraints={{facingMode:{ exact: "environment" }}} 후면
       />
       <button onClick={capture}> Capture photo </button>
       
