@@ -45,8 +45,8 @@ function Camera(props) {
         ref={webcam}
         audio={false}
         screenshotFormat="image/jpeg"
-        width="100%"
-        height="auto"
+        width="50%"
+        height="40vh"
         
         videoConstraints={{facingMode:"user"}}  /* 전면 */
         // videoConstraints={{facingMode:{ exact: "environment" }}} 후면
