@@ -8,8 +8,24 @@ function Camera(props) {
       const fileReader = new FileReader();
       fileReader.readAsDataURL(e.target.files[0]);
       fileReader.onload=(e)=>{
-        setPreImage(e.target.result)
+        setPreImage(e.target.result);
+
+        // const blob = new Blob([e.target.result], { type: 'image/jpeg' });
+        // const formData = new FormData();
+        // formData.append('image', blob);
+        
       }
+
+      const formData = new FormData();
+      formData.append('image', e.target.files[0]);
+
+      fetch('https://port-0-express-jvvy2blm4a51lv.sel5.cloudtype.app/camera/save',{
+        method:'post',
+        headers: {
+          // "Content-Type": "multipart/form-data"
+        },
+        body:formData
+      })    
   }
 
   const webcam = useRef(null);
@@ -21,6 +37,7 @@ function Camera(props) {
       const blob = new Blob([imgSrc], { type: 'image/jpeg' });
       const formData = new FormData();
       formData.append('image', blob);
+
       
       //await fetch('http://localhost:3000/camera/save',{
       await fetch('https://port-0-express-jvvy2blm4a51lv.sel5.cloudtype.app/camera/save',{
@@ -37,7 +54,7 @@ function Camera(props) {
     <div>
       {/* <form method='post' encType='multipart/form-data'></form> */}
       <img src={preImage} />
-      <input type="file" name="photo" accept="image/*" capture="camera" onChange={file} multiple />
+      <input type="file" name="photo"  onChange={file} multiple />
 
       {/* <input type="file" accept="image/*" capture="camera" /> */}
 
