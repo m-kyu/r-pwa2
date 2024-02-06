@@ -6,6 +6,8 @@ function Camera(props) {
 
   const [preImage, setPreImage] = useState();
   const [test, setTest] = useState();
+  const [data, setData] = useState([]);
+  const basicUrl = 'https://port-0-express-jvvy2blm4a51lv.sel5.cloudtype.app';
 
   const file = (e) => {
     // 미리보기
@@ -14,17 +16,26 @@ function Camera(props) {
     fileReader.onload = (e) => {
       setPreImage(e.target.result);
     }
+    
+    let t = new Date(e.target.files[0].lastModified)
+    t.setSeconds(t.getSeconds() + 10)
 
-    setTest(e.target.files[0].name)
+    setTest(e.target.files[0])
+
+
 
     //서버에 이미지 저장
-    /* const formData = new FormData();
+    const formData = new FormData();
     formData.append('image', e.target.files[0]);
 
-    fetch('http://localhost:3000/camera/save',{
+    fetch(basicUrl+'/camera/save',{
       method:'post',
       body:formData
-    })     */
+    })
+    .then(res=>res.json())
+    .then(res=>{
+      setData([...data,res.fileUrl])
+    })
   }
 
   const webcam = useRef(null);
@@ -52,9 +63,37 @@ function Camera(props) {
   return (
     <div>
       {/* <form method='post' encType='multipart/form-data'></form> */}
-      <img src={preImage} />
+      <img src={preImage} width="200" />
       <input type="file" name="photo" onChange={file} multiple />
-      <div>{test}</div>
+
+      <ul>
+        {
+          data.map((obj,k)=>(
+            <li key={k}>
+              <img src={obj}/>
+              <button onClick={()=>{
+                fetch(`${basicUrl}/camera/photo/${obj}`,{
+                  method:'delete',
+                })
+                .then(res=>res.text())
+                .then(res=>{
+                  console.log('삭제성공')
+                })
+              }}>삭제</button>
+            </li>
+          ))
+        }
+      </ul>
+      <div>
+        
+      
+        {test?.name} <br />
+        {test?.size}
+        {test?.type}
+        {test?.webkitRelativePath}
+        {/* {test?.lastModified} */}
+        {test?.lastModified}
+      </div>
 
       {/* <input type="file" accept="image/*" capture="camera" /> */}
 
